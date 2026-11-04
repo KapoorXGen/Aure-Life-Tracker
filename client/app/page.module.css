@@ -20,6 +20,10 @@
     filter: blur(0.3px);
 }
 
+.char-mask {
+  overflow: hidden;
+}
+
 .motto {
     user-select: none;
     text-transform: uppercase;
