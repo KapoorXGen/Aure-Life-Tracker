@@ -43,21 +43,23 @@ export default function Home() {
       opacity: 0,
     });
 
-    gsap.to(split.chars, {
+    const timeline = gsap.timeline();
+
+    timeline.to(split.chars, {
       yPercent: 0,
       duration: 1,
       stagger: 0.1,
       ease: "power3.out",
     });
 
-    gsap.to(mottoRef.current, {
+    timeline.to(mottoRef.current, {
       duration: 2,
       scrambleText: {
         text: MOTTO,
       },
-    });
+    },"<");
 
-    gsap.to(buttonRef.current, {
+    timeline.to(buttonRef.current, {
       y: 0,
       opacity: 1,
       duration: 1,
@@ -77,12 +79,15 @@ export default function Home() {
         </h1>
       </div>
 
-      <p
-        className={styles.motto}
-        ref={mottoRef}
-      >{MOTTO}</p>
+      <p ref={mottoRef} className={styles.motto}>
+        {MOTTO}
+      </p>
 
-      <Link href="/auth/login" className={styles.cta} ref={buttonRef}>
+      <Link
+        href="/auth/login"
+        className={styles.cta}
+        ref={buttonRef}
+      >
         GET STARTED
       </Link>
     </main>
