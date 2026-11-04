@@ -17,9 +17,16 @@ const MOTTO =
 export default function Home() {
   const headingRef = useRef<HTMLHeadingElement>(null);
   const mottoRef = useRef<HTMLParagraphElement>(null);
+  const buttonRef = useRef<HTMLAnchorElement>(null);
 
   useGSAP(() => {
-    if (!headingRef.current || !mottoRef.current) return;
+    if (
+      !headingRef.current ||
+      !mottoRef.current ||
+      !buttonRef.current
+    ) {
+      return;
+    }
 
     const split = SplitText.create(headingRef.current, {
       type: "chars",
@@ -29,6 +36,11 @@ export default function Home() {
 
     gsap.set(split.chars, {
       yPercent: 100,
+    });
+
+    gsap.set(buttonRef.current, {
+      y: 20,
+      opacity: 0,
     });
 
     gsap.to(split.chars, {
@@ -43,7 +55,14 @@ export default function Home() {
       scrambleText: {
         text: MOTTO,
       },
-    })
+    });
+
+    gsap.to(buttonRef.current, {
+      y: 0,
+      opacity: 1,
+      duration: 1,
+      ease: "power3.out",
+    });
 
     return () => {
       split.revert();
@@ -63,7 +82,7 @@ export default function Home() {
         ref={mottoRef}
       >{MOTTO}</p>
 
-      <Link href="/auth/login" className={styles.cta}>
+      <Link href="/auth/login" className={styles.cta} ref={buttonRef}>
         GET STARTED
       </Link>
     </main>
