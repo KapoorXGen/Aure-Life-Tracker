@@ -1,0 +1,93 @@
+.main {
+    background-color: #ffffff;
+    min-height: 100svh;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 24px;
+    text-align: center;
+}
+
+.heading {
+    user-select: none;
+    font-size: clamp(7rem, 12vw, 14rem);
+    font-weight: 600;
+    letter-spacing: -0.055em;
+    line-height: 1;
+    margin-bottom: 10px;
+    filter: blur(0.3px);
+}
+
+.motto {
+    user-select: none;
+    text-transform: uppercase;
+    max-width: 100%;
+    font-size: clamp(0.55rem, 1.1vw, 0.9rem);
+    font-weight: 400;
+    letter-spacing: 0.2em;
+    line-height: 1.8;
+    color: #333333;
+    margin-bottom: 20px;
+    filter: blur(0.2px);
+}
+
+.cta {
+    user-select: none;
+    min-width: 220px;
+    min-height: 58px;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    padding: 16px 36px;
+    border: 2px solid #d0d0d0;
+    border-radius: 100px;
+    background: transparent;
+    color: #080808;
+    text-decoration: none;
+    font-size: 0.95rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    transition:
+        background-color 0.3s ease,
+        color 0.3s ease,
+        border-color 0.3s ease,
+        transform 0.3s ease;
+}
+
+.cta:hover {
+    background: #080808;
+    color: #ffffff;
+    border-color: #080808;
+    transform: translateY(-5px);
+}
+
+.cta:focus-visible {
+    outline: 2px solid #080808;
+    outline-offset: 3px;
+}
+
+@media (max-width: 600px) {
+    .main {
+        padding: 20px;
+    }
+
+    .heading {
+        font-size: clamp(7rem, 22vw, 8rem);
+        margin-bottom: 18px;
+    }
+
+    .motto {
+        max-width: 340px;
+        font-size: 0.6rem;
+        letter-spacing: 0.12em;
+        margin-bottom: 20px;
+    }
+
+    .cta {
+        min-width: 190px;
+        min-height: 52px;
+        font-size: 0.85rem;
+    }
+}
