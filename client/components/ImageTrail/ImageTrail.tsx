@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef } from "react";
+import Image from "next/image";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 
@@ -165,11 +166,14 @@ export default function ImageTrail({
       aria-hidden="true"
     >
       {Array.from({ length: imageCount }).map((_, index) => (
-        <img
+        <Image
           key={index}
           src={images[index % images.length]}
           className={styles.flair}
           alt=""
+          width={80}
+          height={80}
+          unoptimized
           draggable={false}
         />
       ))}
