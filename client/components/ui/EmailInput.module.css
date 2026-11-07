@@ -36,13 +36,6 @@
     color: #000000;
 }
 
-.error {
-    margin: 8px 0 0;
-    font-size: 13px;
-    color: #dc2626;
-    line-height: 1.4;
-}
-
 .inputWrapper:focus-within {
     border-bottom: 2px solid #000000;
 }

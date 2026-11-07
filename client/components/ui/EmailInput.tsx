@@ -1,7 +1,8 @@
-
 import type { LucideIcon } from "lucide-react";
+
 import styles from "./EmailInput.module.css";
 
+// Props Interface
 interface EmailInputProps {
     id: string;
     label: string;
@@ -9,10 +10,10 @@ interface EmailInputProps {
     icon: LucideIcon;
     value: string;
     onChange: (value: string) => void;
-    error?: string;
     required?: boolean;
 }
 
+// Email Input Component
 const EmailInput = ({
     id,
     label,
@@ -20,21 +21,25 @@ const EmailInput = ({
     icon: Icon,
     value,
     onChange,
-    error,
     required
 }: EmailInputProps) => {
+
     return (
         <div className={styles.container}>
-            <label htmlFor={id} className={styles.label}>
+            {/* Input Label */}
+            <label
+                htmlFor={id}
+                className={styles.label}
+            >
                 {label}
             </label>
 
+            {/* Email Input Wrapper */}
             <div className={styles.inputWrapper}>
                 <Icon className={styles.icon} />
+
                 <input
                     className={styles.input}
-                    aria-invalid={Boolean(error)}
-                    aria-describedby={error ? `${id}-error` : undefined}
                     type="email"
                     id={id}
                     name="email"
@@ -44,12 +49,6 @@ const EmailInput = ({
                     onChange={(event) => onChange(event.target.value)}
                 />
             </div>
-
-            {error && (
-                <p className={styles.error} id={`${id}-error`}>
-                    {error}
-                </p>
-            )}
         </div>
     );
 };
