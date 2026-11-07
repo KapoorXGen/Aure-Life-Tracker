@@ -11,6 +11,11 @@
     user-select: none;
 }
 
+.line-mask {
+    overflow: hidden;
+}
+
+
 /* Login Introduction */
 .loginIntro {
     width: 50%;
