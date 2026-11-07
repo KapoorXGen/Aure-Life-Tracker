@@ -1,3 +1,5 @@
+
+/* Main Layout */
 .main {
     min-height: 100svh;
     width: 100%;
@@ -9,6 +11,7 @@
     padding: 40px 24px;
 }
 
+/* Login Introduction */
 .loginIntro {
     width: 50%;
     display: flex;
@@ -25,16 +28,18 @@
     align-items: flex-start;
 }
 
+/* Heading */
 .loginTitle {
     margin: 0;
+    max-width: 450px;
     font-size: clamp(64px, 6.2vw, 100px);
     font-weight: 600;
     line-height: 0.98;
     letter-spacing: -4px;
     color: #000000;
-    max-width: 450px;
 }
 
+/* Description */
 .loginDescription {
     margin: 28px 0 0;
     max-width: 500px;
@@ -45,15 +50,92 @@
     color: #343944;
 }
 
+/* Login Form Section */
+.loginFormSection {
+    width: 50%;
+    max-width: 700px;
+    padding: 0 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    text-align: center;
+}
+
+/* Login Form */
+.loginForm {
+    width: 80%;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+}
+
+/* Login Button */
+.loginButton {
+    width: 100%;
+    min-height: 76px;
+    border: none;
+    border-radius: 50px;
+    background-color: #000000;
+    color: #ffffff;
+    font-size: 24px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.loginButton:hover {
+    background-color: #252525;
+}
+
+.loginButton:active {
+    transform: scale(0.99);
+}
+
+.loginButton:focus-visible {
+    outline: 3px solid #777777;
+    outline-offset: 4px;
+}
+
+/* Signup Text */
+.signupText {
+    margin: 48px 0 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    font-size: 18px;
+    line-height: 1.5;
+    color: #343944;
+    text-align: center;
+}
+
+/* Signup Link */
+.signupLink {
+    color: #000000;
+    font-weight: 500;
+    text-decoration: none;
+    transition: opacity 0.2s ease;
+}
+
+.signupLink:hover {
+    opacity: 0.65;
+    text-decoration: underline;
+}
+
+/* Tablet */
 @media (max-width: 800px) {
     .main {
         flex-direction: column;
         justify-content: center;
-        gap: 48px;
+        gap: 56px;
+        padding: 48px 32px;
     }
 
     .loginIntro {
         width: 100%;
+        padding: 0;
     }
 
     .loginIntroContent {
@@ -64,22 +146,127 @@
 
     .loginTitle {
         max-width: none;
-        font-size: clamp(28px, 5.5vw, 44px);
-        letter-spacing: -1.5px;
+        font-size: clamp(38px, 7vw, 56px);
+        letter-spacing: -2px;
         line-height: 1;
-        white-space: nowrap;
     }
 
     .loginDescription {
-        max-width: none;
-        margin-top: 12px;
-        font-size: clamp(10px, 1.7vw, 14px);
+        max-width: 420px;
+        margin-top: 16px;
+        font-size: clamp(16px, 2.5vw, 19px);
         line-height: 1.5;
         letter-spacing: -0.2px;
-        white-space: nowrap;
     }
 
     .loginFormSection {
         width: 100%;
+        max-width: 480px;
+        padding: 0;
+    }
+
+    .loginForm {
+        width: 100%;
+        gap: 28px;
+    }
+
+    .loginButton {
+        min-height: 62px;
+        font-size: 20px;
+    }
+
+    .signupText {
+        margin-top: 34px;
+        font-size: 16px;
+    }
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+    .main {
+        min-height: 100svh;
+        justify-content: center;
+        gap: 44px;
+        padding:
+            max(32px, env(safe-area-inset-top))
+            24px
+            max(32px, env(safe-area-inset-bottom));
+    }
+
+    .loginIntro {
+        width: 100%;
+    }
+
+    .loginTitle {
+        font-size: clamp(34px, 9vw, 42px);
+        letter-spacing: -1.8px;
+        line-height: 1.05;
+    }
+
+    .loginDescription {
+        max-width: 340px;
+        margin-top: 12px;
+        font-size: 15px;
+        line-height: 1.5;
+        letter-spacing: -0.2px;
+    }
+
+    .loginFormSection {
+        width: 100%;
+        max-width: 380px;
+        padding: 0;
+    }
+
+    .loginForm {
+        width: 100%;
+        gap: 24px;
+    }
+
+    .loginButton {
+        min-height: 56px;
+        font-size: 18px;
+    }
+
+    .signupText {
+        margin-top: 30px;
+        font-size: 14px;
+        gap: 6px;
+    }
+}
+
+/* Extra Small Mobile */
+@media (max-width: 360px) {
+    .main {
+        gap: 38px;
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+
+    .loginTitle {
+        font-size: 32px;
+        letter-spacing: -1.4px;
+    }
+
+    .loginDescription {
+        font-size: 14px;
+    }
+
+    .loginButton {
+        min-height: 52px;
+        font-size: 17px;
+    }
+
+    .signupText {
+        font-size: 13px;
+    }
+}
+
+/* Short Mobile Screens */
+@media (max-width: 480px) and (max-height: 650px) {
+    .main {
+        justify-content: flex-start;
+        gap: 32px;
+        padding-top: 40px;
+        padding-bottom: 40px;
     }
 }
