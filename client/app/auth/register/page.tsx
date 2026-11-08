@@ -177,21 +177,24 @@ const Register = () => {
 
                     {/* Common Form Error */}
                     {formError && (
-                        <p role="alert">
+                        <p className={styles.formError} role="alert">
                             {formError}
                         </p>
                     )}
 
                     {/* Register Button */}
-                    <button type="submit">
+                    <button
+                        type="submit"
+                        className={styles.registerButton}
+                    >
                         Create Account
                     </button>
                 </form>
 
                 {/* Login Navigation */}
-                <p>
+                <p className={styles.loginText}>
                     Already have an account?{" "}
-                    <Link href="/auth/login">
+                    <Link href="/auth/login" className={styles.loginLink}>
                         Log in
                     </Link>
                 </p>
