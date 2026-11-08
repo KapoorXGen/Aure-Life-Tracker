@@ -1,15 +1,55 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import type { FormEvent } from "react";
 import Link from "next/link";
 import { Mail } from "lucide-react";
 
 import EmailInput from "@/components/ui/EmailInput";
+import ImageTrail from "@/components/ImageTrail/ImageTrail";
+
+import gsap from "gsap";
+import { useGSAP } from "@gsap/react";
+import { SplitText } from "gsap/SplitText";
 
 import styles from "./ForgotPassword.module.css";
 
+gsap.registerPlugin(useGSAP, SplitText);
+
+const forgotPasswordDescription =
+    "Don't worry! Enter your registered email address and we'll help you reset your password.";
+
 const ForgotPassword = () => {
+    const forgotPasswordDescriptionRef = useRef<HTMLParagraphElement>(null);
+
+    // Description Text Reveal Animation
+    useGSAP(() => {
+        if (!forgotPasswordDescriptionRef.current) return;
+
+        const split = SplitText.create(
+            forgotPasswordDescriptionRef.current,
+            {
+                type: "lines",
+                mask: "lines",
+                linesClass: "line",
+            }
+        );
+
+        gsap.set(split.lines, {
+            yPercent: 100,
+        });
+
+        gsap.to(split.lines, {
+            yPercent: 0,
+            duration: 0.8,
+            stagger: 0.15,
+            ease: "power3.out",
+            delay: 1.5,
+        });
+    }, {
+        scope: forgotPasswordDescriptionRef,
+    });
+
     // Form State
     const [email, setEmail] = useState("");
 
@@ -58,6 +98,7 @@ const ForgotPassword = () => {
 
     return (
         <main className={styles.main}>
+            <ImageTrail />
 
             {/* Forgot Password Introduction */}
             <section className={styles.forgotPasswordIntro}>
@@ -66,9 +107,11 @@ const ForgotPassword = () => {
                         Forgot Password?
                     </h1>
 
-                    <p className={styles.forgotPasswordDescription}>
-                        Don't worry! Enter your registered email address
-                        and we'll help you reset your password.
+                    <p
+                        className={styles.forgotPasswordDescription}
+                        ref={forgotPasswordDescriptionRef}
+                    >
+                        {forgotPasswordDescription}
                     </p>
                 </div>
             </section>
@@ -80,7 +123,6 @@ const ForgotPassword = () => {
                     onSubmit={handleForgotPassword}
                     noValidate
                 >
-
                     {/* Email Input */}
                     <EmailInput
                         id="forgot-password-email"

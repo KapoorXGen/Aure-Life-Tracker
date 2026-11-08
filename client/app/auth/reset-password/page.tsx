@@ -1,15 +1,55 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import type { FormEvent } from "react";
 import Link from "next/link";
 import { Lock } from "lucide-react";
 
 import PasswordInput from "@/components/ui/PasswordInput";
+import ImageTrail from "@/components/ImageTrail/ImageTrail";
+
+import gsap from "gsap";
+import { useGSAP } from "@gsap/react";
+import { SplitText } from "gsap/SplitText";
 
 import styles from "./ResetPassword.module.css";
 
+gsap.registerPlugin(useGSAP, SplitText);
+
+const resetPasswordDescription =
+    "Create a new password for your account. Make sure it is secure and easy for you to remember.";
+
 const ResetPassword = () => {
+    const resetPasswordDescriptionRef = useRef<HTMLParagraphElement>(null);
+
+    // Description Text Reveal Animation
+    useGSAP(() => {
+        if (!resetPasswordDescriptionRef.current) return;
+
+        const split = SplitText.create(
+            resetPasswordDescriptionRef.current,
+            {
+                type: "lines",
+                mask: "lines",
+                linesClass: "line",
+            }
+        );
+
+        gsap.set(split.lines, {
+            yPercent: 100,
+        });
+
+        gsap.to(split.lines, {
+            yPercent: 0,
+            duration: 0.8,
+            stagger: 0.15,
+            ease: "power3.out",
+            delay: 1.5,
+        });
+    }, {
+        scope: resetPasswordDescriptionRef,
+    });
+
     // Form States
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
@@ -79,6 +119,7 @@ const ResetPassword = () => {
 
     return (
         <main className={styles.main}>
+            <ImageTrail />
 
             {/* Reset Password Introduction */}
             <section className={styles.resetPasswordIntro}>
@@ -87,9 +128,11 @@ const ResetPassword = () => {
                         Reset Password
                     </h1>
 
-                    <p className={styles.resetPasswordDescription}>
-                        Create a new password for your account.
-                        Make sure it is secure and easy for you to remember.
+                    <p
+                        className={styles.resetPasswordDescription}
+                        ref={resetPasswordDescriptionRef}
+                    >
+                        {resetPasswordDescription}
                     </p>
                 </div>
             </section>
@@ -101,7 +144,6 @@ const ResetPassword = () => {
                     onSubmit={handleResetPassword}
                     noValidate
                 >
-
                     {/* New Password Input */}
                     <PasswordInput
                         id="reset-password"
