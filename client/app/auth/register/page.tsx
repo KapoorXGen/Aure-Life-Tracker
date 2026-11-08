@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import type { FormEvent } from "react";
 import Link from "next/link";
 import { UserRound, Mail, Lock } from "lucide-react";
@@ -10,7 +10,41 @@ import PasswordInput from "@/components/ui/PasswordInput";
 
 import styles from "./Register.module.css";
 
+import gsap from "gsap";
+import { useGSAP } from "@gsap/react";
+import { SplitText } from "gsap/SplitText";
+import ImageTrail from "@/components/ImageTrail/ImageTrail";
+
+gsap.registerPlugin(useGSAP, SplitText);
+
 const Register = () => {
+
+    const registerDescriptionRef = useRef<HTMLParagraphElement>(null);
+
+    useGSAP(() => {
+        if (!registerDescriptionRef.current) return;
+
+        const split = SplitText.create(registerDescriptionRef.current, {
+            type: "lines",
+            mask: "lines",
+            linesClass: "line",
+        });
+
+        gsap.set(split.lines, {
+            yPercent: 100,
+        });
+
+        gsap.to(split.lines, {
+            yPercent: 0,
+            duration: 0.8,
+            stagger: 0.15,
+            ease: "power3.out",
+            delay: 1.5,
+        });
+    }, {
+        scope: registerDescriptionRef,
+    });
+
     // Form States
     const [fullName, setFullName] = useState("");
     const [email, setEmail] = useState("");
@@ -103,6 +137,9 @@ const Register = () => {
 
     return (
         <main className={styles.main}>
+            {/* ImageTrail Animation */}
+            <ImageTrail />
+
             {/* Register Introduction */}
             <section className={styles.registerIntro}>
                 <div className={styles.registerIntroContent}>
@@ -110,7 +147,10 @@ const Register = () => {
                         Create Account
                     </h1>
 
-                    <p className={styles.registerDescription}>
+                    <p
+                        className={styles.registerDescription}
+                        ref={registerDescriptionRef}
+                    >
                         Create your account to get started and enjoy our services.
                     </p>
                 </div>
