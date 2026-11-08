@@ -1,7 +1,167 @@
-const ResetPassword = () => {
-    return (
-        <main>
+"use client";
 
+import { useState } from "react";
+import type { FormEvent } from "react";
+import Link from "next/link";
+import { Lock } from "lucide-react";
+
+import PasswordInput from "@/components/ui/PasswordInput";
+
+import styles from "./ResetPassword.module.css";
+
+const ResetPassword = () => {
+    // Form States
+    const [password, setPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
+
+    // Form Feedback States
+    const [formError, setFormError] = useState("");
+    const [successMessage, setSuccessMessage] = useState("");
+
+    // Password Change Handler
+    const handlePasswordChange = (value: string) => {
+        setPassword(value);
+
+        if (formError) {
+            setFormError("");
+        }
+
+        if (successMessage) {
+            setSuccessMessage("");
+        }
+    };
+
+    // Confirm Password Change Handler
+    const handleConfirmPasswordChange = (value: string) => {
+        setConfirmPassword(value);
+
+        if (formError) {
+            setFormError("");
+        }
+
+        if (successMessage) {
+            setSuccessMessage("");
+        }
+    };
+
+    // Form Submission Handler
+    const handleResetPassword = (
+        event: FormEvent<HTMLFormElement>
+    ) => {
+        event.preventDefault();
+
+        // Validate Password
+        if (!password.trim()) {
+            setFormError("Password is required");
+            return;
+        }
+
+        // Validate Confirm Password
+        if (!confirmPassword.trim()) {
+            setFormError("Please confirm your password");
+            return;
+        }
+
+        // Check Password Match
+        if (password !== confirmPassword) {
+            setFormError("Passwords do not match");
+            return;
+        }
+
+        // Clear Previous Error
+        setFormError("");
+
+        // Password Reset Logic Will Be Implemented Later
+        setSuccessMessage(
+            "Your password has been reset successfully."
+        );
+    };
+
+    return (
+        <main className={styles.main}>
+
+            {/* Reset Password Introduction */}
+            <section className={styles.resetPasswordIntro}>
+                <div className={styles.resetPasswordIntroContent}>
+                    <h1 className={styles.resetPasswordTitle}>
+                        Reset Password
+                    </h1>
+
+                    <p className={styles.resetPasswordDescription}>
+                        Create a new password for your account.
+                        Make sure it is secure and easy for you to remember.
+                    </p>
+                </div>
+            </section>
+
+            {/* Reset Password Form Section */}
+            <section className={styles.resetPasswordFormSection}>
+                <form
+                    className={styles.resetPasswordForm}
+                    onSubmit={handleResetPassword}
+                    noValidate
+                >
+
+                    {/* New Password Input */}
+                    <PasswordInput
+                        id="reset-password"
+                        label="New Password"
+                        placeholder="Enter your new password"
+                        icon={Lock}
+                        value={password}
+                        onChange={handlePasswordChange}
+                    />
+
+                    {/* Confirm Password Input */}
+                    <PasswordInput
+                        id="confirm-reset-password"
+                        label="Confirm Password"
+                        placeholder="Confirm your new password"
+                        icon={Lock}
+                        value={confirmPassword}
+                        onChange={handleConfirmPasswordChange}
+                    />
+
+                    {/* Common Form Error */}
+                    {formError && (
+                        <p
+                            className={styles.formError}
+                            role="alert"
+                        >
+                            {formError}
+                        </p>
+                    )}
+
+                    {/* Success Message */}
+                    {successMessage && (
+                        <p
+                            className={styles.successMessage}
+                            role="status"
+                        >
+                            {successMessage}
+                        </p>
+                    )}
+
+                    {/* Submit Button */}
+                    <button
+                        type="submit"
+                        className={styles.resetPasswordButton}
+                    >
+                        Reset Password
+                    </button>
+                </form>
+
+                {/* Login Navigation */}
+                <p className={styles.loginText}>
+                    Remember your password?{" "}
+                    <Link
+                        href="/auth/login"
+                        className={styles.loginLink}
+                    >
+                        Log in
+                    </Link>
+                </p>
+            </section>
         </main>
     );
 };
