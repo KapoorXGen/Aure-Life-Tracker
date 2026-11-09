@@ -15,6 +15,8 @@ import { useGSAP } from "@gsap/react";
 import { SplitText } from "gsap/SplitText";
 import ImageTrail from "@/components/ImageTrail/ImageTrail";
 
+import API_BASE_URL from "@/lib/api";
+
 gsap.registerPlugin(useGSAP, SplitText);
 
 const loginDescription = "Log in to your account to continue and access your services.";
@@ -34,7 +36,7 @@ const Login = () => {
         gsap.set(split.lines, {
             yPercent: 100,
         });
-        
+
 
         gsap.to(split.lines, {
             yPercent: 0,
@@ -73,7 +75,7 @@ const Login = () => {
     };
 
     // Form Submission Handler
-    const handleLogin = (event: FormEvent<HTMLFormElement>) => {
+    const handleLogin = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
         // Validate Email
@@ -97,6 +99,36 @@ const Login = () => {
         setFormError("");
 
         // Login Logic Will Be Implemented Later
+
+        try {
+            const response = await fetch(`${API_BASE_URL}/auth/login`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                credentials: "include",
+                body: JSON.stringify({
+                    email: email.trim(),
+                    password,
+                }),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                setFormError(data.message || "Login failed.");
+                return;
+            }
+
+            console.log("Login successful:", data);
+        }
+
+        catch (error) {
+            console.error("Login error:", error);
+            setFormError("Unable to connect to the server. Please try again.");
+        }
+
+
     };
 
     return (
