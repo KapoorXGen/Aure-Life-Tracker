@@ -12,6 +12,8 @@ import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { SplitText } from "gsap/SplitText";
 
+import API_BASE_URL from "@/lib/api";
+
 import styles from "./ForgotPassword.module.css";
 
 gsap.registerPlugin(useGSAP, SplitText);
@@ -71,7 +73,7 @@ const ForgotPassword = () => {
     };
 
     // Form Submission Handler
-    const handleForgotPassword = (
+    const handleForgotPassword = async (
         event: FormEvent<HTMLFormElement>
     ) => {
         event.preventDefault();
@@ -89,11 +91,35 @@ const ForgotPassword = () => {
 
         // Clear Previous Feedback
         setFormError("");
+        setSuccessMessage("");
 
-        // Password Reset Email Logic Will Be Implemented Later
-        setSuccessMessage(
-            "If an account exists with this email, you will receive a password reset link."
-        );
+        try {
+            const response = await fetch(`${API_BASE_URL}/auth/forgot-password`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    email: email.trim(),
+                }),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                setFormError(data.message || "Failed to send reset link.");
+                return;
+            }
+
+            setSuccessMessage(
+                data.message ||
+                "If an account exists with this email, you will receive a password reset link."
+            );
+
+        } catch (error) {
+            console.error("Forgot password error:", error);
+            setFormError("Unable to connect to the server. Please try again.");
+        }
     };
 
     return (
