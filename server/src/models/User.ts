@@ -18,6 +18,14 @@ const userSchema = new mongoose.Schema({
         required: true,
         select: false,
     },
+    passwordResetToken: {
+        type: String,
+        select: false,
+    },
+    passwordResetTokenExpiry: {
+        type: Date,
+        select: false,
+    },
 }, {
     timestamps: true,
 });
