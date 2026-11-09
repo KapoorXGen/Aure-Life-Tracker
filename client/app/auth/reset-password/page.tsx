@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import type { FormEvent } from "react";
 import Link from "next/link";
 import { Lock } from "lucide-react";
+import { useSearchParams } from "next/navigation";
 
 import PasswordInput from "@/components/ui/PasswordInput";
 import ImageTrail from "@/components/ImageTrail/ImageTrail";
@@ -11,6 +12,8 @@ import ImageTrail from "@/components/ImageTrail/ImageTrail";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { SplitText } from "gsap/SplitText";
+
+import API_BASE_URL from "@/lib/api";
 
 import styles from "./ResetPassword.module.css";
 
@@ -21,6 +24,16 @@ const resetPasswordDescription =
 
 const ResetPassword = () => {
     const resetPasswordDescriptionRef = useRef<HTMLParagraphElement>(null);
+    const searchParams = useSearchParams();
+    const token = searchParams.get("token");
+
+    // Form States
+    const [password, setPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
+
+    // Form Feedback States
+    const [formError, setFormError] = useState("");
+    const [successMessage, setSuccessMessage] = useState("");
 
     // Description Text Reveal Animation
     useGSAP(() => {
@@ -50,14 +63,6 @@ const ResetPassword = () => {
         scope: resetPasswordDescriptionRef,
     });
 
-    // Form States
-    const [password, setPassword] = useState("");
-    const [confirmPassword, setConfirmPassword] = useState("");
-
-    // Form Feedback States
-    const [formError, setFormError] = useState("");
-    const [successMessage, setSuccessMessage] = useState("");
-
     // Password Change Handler
     const handlePasswordChange = (value: string) => {
         setPassword(value);
@@ -85,10 +90,16 @@ const ResetPassword = () => {
     };
 
     // Form Submission Handler
-    const handleResetPassword = (
+    const handleResetPassword = async (
         event: FormEvent<HTMLFormElement>
     ) => {
         event.preventDefault();
+
+        // Validate Reset Token
+        if (!token) {
+            setFormError("Invalid or missing reset link.");
+            return;
+        }
 
         // Validate Password
         if (!password.trim()) {
@@ -108,13 +119,38 @@ const ResetPassword = () => {
             return;
         }
 
-        // Clear Previous Error
+        // Clear Previous Feedback
         setFormError("");
+        setSuccessMessage("");
 
-        // Password Reset Logic Will Be Implemented Later
-        setSuccessMessage(
-            "Your password has been reset successfully."
-        );
+        try {
+            const response = await fetch(`${API_BASE_URL}/auth/reset-password`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    token,
+                    newPassword: password,
+                    confirmPassword,
+                }),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                setFormError(data.message || "Password reset failed.");
+                return;
+            }
+
+            setSuccessMessage(
+                data.message || "Your password has been reset successfully."
+            );
+
+        } catch (error) {
+            console.error("Reset password error:", error);
+            setFormError("Unable to connect to the server. Please try again.");
+        }
     };
 
     return (
