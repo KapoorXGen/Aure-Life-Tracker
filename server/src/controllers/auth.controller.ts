@@ -185,7 +185,6 @@ export const loginUser = async (req: Request, res: Response) => {
     }
 };
 
-
 export const forgotPassword = async (req: Request, res: Response) => {
     try {
         // 1. Extract email
@@ -366,6 +365,90 @@ export const forgotPassword = async (req: Request, res: Response) => {
 
     } catch (error) {
         console.error("Forgot password error:", error);
+
+        return res.status(500).json({
+            success: false,
+            message: "Internal server error.",
+        });
+    }
+};
+
+export const resetPassword = async (req: Request, res: Response) => {
+    try {
+        // 1. Extract request data
+        const { token, newPassword, confirmPassword } = req.body ?? {};
+
+        // 2. Validate input types and required fields
+        if (
+            typeof token !== "string" ||
+            typeof newPassword !== "string" ||
+            typeof confirmPassword !== "string" ||
+            !token.trim() ||
+            !newPassword ||
+            !confirmPassword
+        ) {
+            return res.status(400).json({
+                success: false,
+                message: "Token, new password, and confirm password are required.",
+            });
+        }
+
+        // 3. Validate password length
+        if (newPassword.length < 8 || newPassword.length > 128) {
+            return res.status(400).json({
+                success: false,
+                message: "Password must be between 8 and 128 characters.",
+            });
+        }
+
+        // 4. Confirm passwords
+        if (newPassword !== confirmPassword) {
+            return res.status(400).json({
+                success: false,
+                message: "Passwords do not match.",
+            });
+        }
+
+        // 5. Hash incoming raw token
+        const hashedToken = crypto
+            .createHash("sha256")
+            .update(token)
+            .digest("hex");
+
+        // 6. Find user with a valid, unexpired reset token
+        const user = await User.findOne({
+            passwordResetToken: hashedToken,
+            passwordResetTokenExpiry: { $gt: new Date() },
+        }).select("+passwordResetToken +passwordResetTokenExpiry");
+
+        // 7. Reject invalid or expired tokens
+        if (!user) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid or expired password reset token.",
+            });
+        }
+
+        // 8. Hash the new password
+        const newPasswordHash = await argon2.hash(newPassword, {
+            type: argon2.argon2id,
+        });
+
+        // 9. Update password and clear reset token
+        user.passwordHash = newPasswordHash;
+        user.passwordResetToken = undefined;
+        user.passwordResetTokenExpiry = undefined;
+
+        await user.save();
+
+        // 10. Send success response
+        return res.status(200).json({
+            success: true,
+            message: "Password has been reset successfully. Please log in with your new password.",
+        });
+
+    } catch (error) {
+        console.error("Reset password error:", error);
 
         return res.status(500).json({
             success: false,
