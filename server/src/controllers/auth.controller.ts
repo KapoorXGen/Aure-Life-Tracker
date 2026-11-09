@@ -238,107 +238,288 @@ export const forgotPassword = async (req: Request, res: Response) => {
         const resetURL = `http://localhost:3000/auth/reset-password?token=${encodeURIComponent(resetToken)}`;
 
         // 11. Send password reset email
+        const safeResetURL = resetURL
+            .replace(/&/g, "&amp;")
+            .replace(/"/g, "&quot;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;");
+
+        const currentYear = new Date().getFullYear();
+
         const { error } = await resend.emails.send({
             from: "Aure <onboarding@resend.dev>",
             to: user.email,
-            subject: "Reset your Aure password",
+            subject: "Reset your password | AURE",
 
             html: `
-                    <!DOCTYPE html>
-                    <html>
-                    <head>
-                        <meta charset="UTF-8" />
-                        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-                        <title>Reset Your Password - Aure</title>
-                    </head>
+                <!DOCTYPE html>
+                <html lang="en">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <meta name="color-scheme" content="light">
+                    <meta name="supported-color-schemes" content="light">
+                    <title>Reset your password | AURE</title>
+                </head>
 
-                    <body style="margin:0; padding:0; background-color:#ffffff; font-family:Arial, Helvetica, sans-serif; color:#000000;">
+                <body style="
+                    margin:0;
+                    padding:0;
+                    background-color:#ffffff;
+                    font-family:Arial, Helvetica, sans-serif;
+                    color:#000000;
+                    -webkit-font-smoothing:antialiased;
+                ">
 
-                        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color:#ffffff;">
-                            <tr>
-                                <td align="center" style="padding:60px 20px;">
+                <!-- Preheader -->
+                <div style="
+                    display:none;
+                    max-height:0;
+                    overflow:hidden;
+                    opacity:0;
+                    color:transparent;
+                ">
+                    Reset your AURE account password securely.
+                </div>
 
-                                    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="max-width:600px;">
+                <table
+                    role="presentation"
+                    width="100%"
+                    cellspacing="0"
+                    cellpadding="0"
+                    border="0"
+                    style="background-color:#ffffff;"
+                >
+                <tr>
+                <td align="center" style="padding:45px 20px;">
 
-                                        <tr>
-                                            <td align="center" style="padding-bottom:55px;">
-                                                <h2 style="margin:0; font-size:22px; font-weight:800; letter-spacing:5px;">
-                                                    AURE
-                                                </h2>
-                                            </td>
-                                        </tr>
+                    <table
+                        role="presentation"
+                        width="100%"
+                        cellspacing="0"
+                        cellpadding="0"
+                        border="0"
+                        style="max-width:560px;"
+                    >
 
-                                        <tr>
-                                            <td align="center">
-                                                <h1 style="margin:0; font-size:52px; line-height:1.05; font-weight:800; letter-spacing:-2px; color:#000000;">
-                                                    Reset<br />Password
-                                                </h1>
-                                            </td>
-                                        </tr>
+                        <!-- Brand -->
+                        <tr>
+                            <td align="center" style="padding:20px 0 65px;">
 
-                                        <tr>
-                                            <td align="center" style="padding:24px 15px 35px;">
-                                                <p style="margin:0; max-width:420px; font-size:19px; line-height:1.55; color:#263445;">
-                                                    Create a new password for your Aure account.
-                                                    Make sure it is secure and easy for you to remember.
-                                                </p>
-                                            </td>
-                                        </tr>
+                                <h2 style="
+                                    margin:0;
+                                    font-size:32px;
+                                    line-height:1;
+                                    font-weight:800;
+                                    letter-spacing:5px;
+                                    color:#000000;
+                                ">
+                                    AURE.
+                                </h2>
 
-                                        <tr>
-                                            <td align="center" style="padding:10px 0 25px;">
-                                                <a href="${resetURL}"
-                                                   style="display:inline-block; width:100%; max-width:420px; box-sizing:border-box; padding:17px 25px; background-color:#000000; color:#ffffff; text-decoration:none; text-align:center; font-size:17px; font-weight:600; border-radius:40px;">
-                                                    Reset Password
-                                                </a>
-                                            </td>
-                                        </tr>
+                            </td>
+                        </tr>
 
-                                        <tr>
-                                            <td align="center" style="padding:12px 15px;">
-                                                <p style="margin:0; font-size:14px; line-height:1.7; color:#64748b;">
-                                                    This password reset link expires in 15 minutes.
-                                                </p>
-                                            </td>
-                                        </tr>
+                        <!-- Main Heading -->
+                        <tr>
+                            <td align="center">
 
-                                        <tr>
-                                            <td align="center" style="padding:15px 20px;">
-                                                <p style="margin:0 0 8px; font-size:13px; color:#64748b;">
-                                                    If the button doesn't work, copy this link:
-                                                </p>
-                                                <a href="${resetURL}" style="font-size:12px; color:#000000; word-break:break-all;">
-                                                    ${resetURL}
-                                                </a>
-                                            </td>
-                                       </tr>
+                                <h1 style="
+                                    margin:0;
+                                    font-size:52px;
+                                    line-height:1.04;
+                                    font-weight:700;
+                                    letter-spacing:-2.5px;
+                                    color:#000000;
+                                ">
+                                    Reset your<br>
+                                    password.
+                                </h1>
 
-                                        <tr>
-                                            <td align="center" style="padding:30px 20px 10px;">
-                                                <p style="margin:0; font-size:13px; line-height:1.7; color:#64748b;">
-                                                    Didn't request a password reset? You can safely ignore this email.
-                                                    Your account password will remain unchanged.
-                                                </p>
-                                            </td>
-                                        </tr>
+                            </td>
+                        </tr>
 
-                                        <tr>
-                                            <td align="center" style="padding-top:45px;">
-                                                <p style="margin:0; font-size:12px; color:#9ca3af;">
-                                                    © ${new Date().getFullYear()} Aure. All rights reserved.
-                                                </p>
-                                            </td>
-                                        </tr>
+                        <!-- Description -->
+                        <tr>
+                            <td align="center" style="padding:28px 15px 35px;">
 
-                                    </table>
+                                <p style="
+                                    margin:0 0 15px;
+                                    font-size:18px;
+                                    line-height:1.5;
+                                    font-weight:500;
+                                    color:#343944;
+                                ">
+                                    A fresh start is just one step away.
+                                </p>
 
-                                    </td>
-                            </tr>
-                        </table>
+                                <p style="
+                                    margin:0 auto;
+                                    max-width:420px;
+                                    font-size:15px;
+                                    line-height:1.8;
+                                    color:#666666;
+                                ">
+                                    We received a request to reset the password
+                                    associated with your AURE account.
+                                    Click below to create a new one.
+                                </p>
 
-                    </body> 
-                    </html>
-                    `,
+                            </td>
+                        </tr>
+                    
+                        <!-- CTA -->
+                        <tr>
+                            <td align="center" style="padding:10px 0 25px;">
+
+                                <table
+                                    role="presentation"
+                                    width="100%"
+                                    cellspacing="0"
+                                    cellpadding="0"
+                                    border="0"
+                                    style="max-width:420px;"
+                                >
+                                    <tr>
+                                        <td
+                                            align="center"
+                                            bgcolor="#000000"
+                                            style="
+                                                background-color:#000000;
+                                                border-radius:50px;
+                                            "
+                                        >
+                                            <a
+                                                href="${safeResetURL}"
+                                                target="_blank"
+                                                style="
+                                                    display:block;
+                                                    padding:19px 25px;
+                                                    font-size:16px;
+                                                    line-height:20px;
+                                                    font-weight:600;
+                                                    letter-spacing:0.4px;
+                                                    color:#ffffff;
+                                                    text-decoration:none;
+                                                    text-align:center;
+                                                    border-radius:50px;
+                                                "
+                                                >
+                                                RESET PASSWORD
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </table>
+
+                            </td>
+                        </tr>
+
+                        <!-- Expiry -->
+                        <tr>
+                            <td align="center" style="padding:5px 15px 45px;">
+
+                                <p style="
+                                    margin:0;
+                                    font-size:13px;
+                                    line-height:1.7;
+                                    color:#888888;
+                                ">
+                                    This password reset link expires in 15 minutes.
+                                </p>
+
+                            </td>
+                        </tr>               
+
+                        <!-- Divider -->
+                        <tr>
+                            <td style="
+                                border-top:1px solid #eeeeee;
+                                font-size:0;
+                                line-height:0;
+                            ">
+                                &nbsp;
+                            </td>
+                        </tr>
+
+                        <!-- Fallback Link -->
+                        <tr>
+                            <td align="left" style="padding:30px 5px 20px;">
+
+                                <p style="
+                                    margin:0 0 12px;
+                                    font-size:13px;
+                                    line-height:1.6;
+                                    color:#777777;
+                                ">
+                                    Having trouble with the button?
+                                    Copy and paste this link into your browser.
+                                </p>
+
+                                <a
+                                    href="${safeResetURL}"
+                                    target="_blank"
+                                    style="
+                                        font-size:12px;
+                                        line-height:1.7;
+                                        color:#000000;
+                                        word-break:break-all;
+                                        text-decoration:underline;
+                                    "
+                                >
+                                    ${safeResetURL}
+                                </a>
+
+                            </td>
+                        </tr>   
+
+                        <!-- Security Notice -->
+                        <tr>
+                            <td align="center" style="padding:30px 15px 45px;">
+
+                                <p style="
+                                    margin:0;
+                                    max-width:430px;
+                                    font-size:13px;
+                                    line-height:1.8;
+                                    color:#888888;
+                                ">
+                                    Didn't request a password reset?
+                                    You can safely ignore this email.
+                                    Your account password will remain unchanged.
+                                </p>
+
+                            </td>
+                        </tr>
+
+                        <!-- Footer -->
+                        <tr>
+                            <td align="center" style="
+                                border-top:1px solid #eeeeee;
+                                padding:30px 10px 10px;
+                            ">
+
+                                <p style="
+                                    margin:0;
+                                    font-size:12px;
+                                    line-height:1.6;
+                                    letter-spacing:0.5px;
+                                    color:#aaaaaa;
+                                ">
+                                    © ${currentYear} AURE. ALL RIGHTS RESERVED.
+                                </p>
+
+                            </td>
+                        </tr>
+
+                    </table>
+
+                </td>
+                </tr>
+                </table>
+
+                </body>
+                </html>
+    `,
         });
 
         // 12. Handle email sending failure
