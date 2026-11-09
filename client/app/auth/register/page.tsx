@@ -15,6 +15,8 @@ import { useGSAP } from "@gsap/react";
 import { SplitText } from "gsap/SplitText";
 import ImageTrail from "@/components/ImageTrail/ImageTrail";
 
+import API_BASE_URL from "@/lib/api";
+
 gsap.registerPlugin(useGSAP, SplitText);
 
 const Register = () => {
@@ -91,7 +93,7 @@ const Register = () => {
     };
 
     // Form Submission Handler
-    const handleRegister = (event: FormEvent<HTMLFormElement>) => {
+    const handleRegister = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
         // Validate Full Name
@@ -132,7 +134,33 @@ const Register = () => {
         // Clear Form Error
         setFormError("");
 
-        // Registration Logic Will Be Implemented Later
+        try {
+            const response = await fetch(`${API_BASE_URL}/auth/register`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    fullName: fullName.trim(),
+                    email: email.trim(),
+                    password,
+                    confirmPassword,
+                }),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                setFormError(data.message || "Registration failed.");
+                return;
+            }
+
+            console.log("Registration successful:", data);
+
+        } catch (error) {
+            console.error("Registration error:", error);
+            setFormError("Unable to connect to the server. Please try again.");
+        }
     };
 
     return (
