@@ -164,15 +164,42 @@ export const loginUser = async (req: Request, res: Response) => {
             });
         }
 
-        // 7. Return successful login response
-        return res.status(200).json({
-            success: true,
-            message: "Login successful.",
-            user: {
-                id: user._id,
-                fullName: user.fullName,
-                email: user.email,
-            },
+        // 7. Regenerate session
+        req.session.regenerate((error) => {
+            if (error) {
+                console.error("Session regeneration error:", error);
+
+                return res.status(500).json({
+                    success: false,
+                    message: "Failed to create session.",
+                });
+            }
+
+            // 8. Store user ID in session
+            req.session.userId = user._id.toString();
+
+            // 9. Save session
+            req.session.save((error) => {
+                if (error) {
+                    console.error("Session save error:", error);
+
+                    return res.status(500).json({
+                        success: false,
+                        message: "Failed to create session.",
+                    });
+                }
+
+                // 10. Return successful login response
+                return res.status(200).json({
+                    success: true,
+                    message: "Login successful.",
+                    user: {
+                        id: user._id,
+                        fullName: user.fullName,
+                        email: user.email,
+                    },
+                });
+            });
         });
 
     } catch (error) {
@@ -636,4 +663,61 @@ export const resetPassword = async (req: Request, res: Response) => {
             message: "Internal server error.",
         });
     }
+};
+
+export const getCurrentUser = async (req: Request, res: Response) => {
+    try {
+        const user = await User.findById(req.session.userId);
+
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: "User not found.",
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            user: {
+                id: user._id,
+                fullName: user.fullName,
+                email: user.email,
+            },
+        });
+    } catch (error) {
+        console.error("Get current user error:", error);
+
+        return res.status(500).json({
+            success: false,
+            message: "Internal server error.",
+        });
+    }
+};
+
+export const logoutUser = (req: Request, res: Response) => {
+    // 1. Destroy the current session
+    req.session.destroy((error) => {
+        if (error) {
+            console.error("Logout error:", error);
+
+            return res.status(500).json({
+                success: false,
+                message: "Failed to logout.",
+            });
+        }
+
+        // 2. Clear session cookie
+        res.clearCookie("connect.sid", {
+            httpOnly: true,
+            secure: false,
+            sameSite: "lax",
+            path: "/",
+        });
+
+        // 3. Send logout success response
+        return res.status(200).json({
+            success: true,
+            message: "Logout successful.",
+        });
+    });
 };
