@@ -115,3 +115,72 @@ export const registerUser = async (req: Request, res: Response) => {
         });
     }
 };
+
+
+export const loginUser = async (req: Request, res: Response) => {
+    try {
+        const { email, password } = req.body ?? {};
+
+        // 1. Validate input types and required fields
+        if (
+            typeof email !== "string" ||
+            typeof password !== "string" ||
+            !email.trim() ||
+            !password
+        ) {
+            return res.status(400).json({
+                success: false,
+                message: "Email and password are required.",
+            });
+        }
+
+        // 2. Normalize email
+        const normalizedEmail = email.trim().toLowerCase();
+
+        // 3. Find user and explicitly retrieve password hash
+        const user = await User.findOne({
+            email: normalizedEmail,
+        }).select("+passwordHash");
+
+        // 4. Check whether user exists
+        if (!user) {
+            return res.status(401).json({
+                success: false,
+                message: "Invalid email or password.",
+            });
+        }
+
+        // 5. Verify password
+        const isPasswordValid = await argon2.verify(
+            user.passwordHash,
+            password
+        );
+
+        // 6. Reject invalid password
+        if (!isPasswordValid) {
+            return res.status(401).json({
+                success: false,
+                message: "Invalid email or password.",
+            });
+        }
+
+        // 7. Return successful login response
+        return res.status(200).json({
+            success: true,
+            message: "Login successful.",
+            user: {
+                id: user._id,
+                fullName: user.fullName,
+                email: user.email,
+            },
+        });
+
+    } catch (error) {
+        console.error("Login error:", error);
+
+        return res.status(500).json({
+            success: false,
+            message: "Internal server error.",
+        });
+    }
+};
